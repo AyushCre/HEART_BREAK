@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEART_BREAK Project</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: sans-serif;
+        }
+
+        /* Realistic Stars Animation */
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.1; }
+            100% { opacity: 1; }
+        }
+
+        /* Scene Container */
+        .scene {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Bada Moon Setup - Size aur bada kiya */
+        #moon {
+            position: absolute;
+            width: 550px; /* Bada Moon */
+            z-index: 1;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        /* Hands VIDEO Setup - Bada kiya, aur gayab hone ke liye transition lagaya */
+        #hands {
+            position: absolute;
+            width: 480px; 
+            z-index: 2; /* Moon ke aage, Heart ke piche */
+            opacity: 0.95; 
+            -webkit-mask-image: radial-gradient(closest-side, black 25%, transparent 85%);
+            mask-image: radial-gradient(closest-side, black 25%, transparent 85%);
+            transition: opacity 1.5s ease-in-out; /* Dheere se gayab hone ke liye */
+        }
+
+        /* Heart Setup - Solid aur Sabse aage */
+        #heart {
+            position: absolute;
+            width: 550px; /* Bada size */
+            z-index: 3; /* Sabse aage (Top layer) */
+            opacity: 0; 
+            transform: scale(0.2); 
+            transition: opacity 1.5s ease-in-out, transform 2.5s ease-out; 
+            /* Yahan se mix-blend-mode hata diya gaya hai taaki transparent na ho */
+        }
+
+        /* Start Screen */
+        #start-screen {
+            position: absolute;
+            z-index: 10;
+            background: rgba(0,0,0,0.9);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        button {
+            padding: 15px 40px;
+            font-size: 22px;
+            cursor: pointer;
+            background-color: #e60000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(230,0,0,0.5);
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music">
+        <source src="jana jaha.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="start-screen">
+        <button onclick="startProject()">Start Project 🎵</button>
+    </div>
+
+    <div class="scene">
+        <img id="moon" src="Crisp Detailed Full Moon (2).png" alt="Moon">
+        <video id="hands" src="romantic_hands_no_timer.mp4" muted playsinline></video>
+        <img id="heart" src="Glossy Red Heart on Black (1).png" alt="Heart">
+    </div>
+
+    <script>
+        // Generate random realistic stars
+        const numStars = 200; 
+        for (let i = 0; i < numStars; i++) {
+            let star = document.createElement("div");
+            star.className = "star";
+            
+            let size = Math.random() * 2.5 + "px";
+            star.style.width = size;
+            star.style.height = size;
+            star.style.left = Math.random() * 100 + "vw";
+            star.style.top = Math.random() * 100 + "vh";
+            
+            star.style.animationDuration = (Math.random() * 3 + 1) + "s";
+            document.body.appendChild(star);
+        }
+
+        function startProject() {
+            document.getElementById('start-screen').style.display = 'none';
+            
+            let audio = document.getElementById('bg-music');
+            audio.play();
+
+            let video = document.getElementById('hands');
+            video.currentTime = 0; 
+            video.play();
+
+            // 5 seconds ka magical timer
+            setTimeout(() => {
+                document.getElementById('moon').style.opacity = '0'; // Moon gayab
+                document.getElementById('hands').style.opacity = '0'; // Hands video gayab (Naya add kiya)
+                
+                let heart = document.getElementById('heart');
+                heart.style.opacity = '1'; // Heart dikhega (Solid mode me)
+                heart.style.transform = 'scale(1)'; // Bada hoga
+            }, 8000); // 5000 means 5 seconds
+        }
+    </script>
+</body>
+</html>
