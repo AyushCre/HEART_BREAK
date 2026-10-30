@@ -88,8 +88,8 @@
             display: none; 
             position: absolute;
             z-index: 10;
-            top: 30px; /* Upar se thoda gap */
-            right: 40px; /* Right se thoda gap */
+            top: 30px; 
+            right: 40px; 
         }
 
         button {
@@ -106,6 +106,27 @@
         button:hover {
             background-color: #ff3333;
         }
+
+        /* ========================================= */
+        /* MOBILE RESPONSIVE FIX (For Phone Screens) */
+        /* ========================================= */
+        @media (max-width: 600px) {
+            #moon, #heart {
+                width: 90vw; /* Screen ki width ka 90% */
+            }
+            #hands {
+                width: 80vw; 
+                height: 80vw; /* Square shape maintain rahega */
+            }
+            #restart-screen {
+                top: 20px;
+                right: 20px; /* Chhoti screen me corner thoda paas rahega */
+            }
+            button {
+                padding: 12px 30px;
+                font-size: 18px; /* Button phone me thoda chhota dikhega */
+            }
+        }
     </style>
 </head>
 <body>
@@ -115,7 +136,7 @@
     </audio>
 
     <div id="start-screen">
-        <button onclick="startProject()">❤️ FEEL THIS EMOTION 🥹🎶</button>
+        <button onclick="startProject()">feel this emotion</button>
     </div>
 
     <!-- Play Again Screen (Top Right) -->
