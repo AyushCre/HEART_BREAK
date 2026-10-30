@@ -112,41 +112,44 @@
         /* ========================================= */
         @media (max-width: 600px) {
             #moon, #heart {
-                width: 90vw; /* Screen ki width ka 90% */
+                width: 90vw; 
             }
             #hands {
                 width: 80vw; 
-                height: 80vw; /* Square shape maintain rahega */
+                height: 80vw; 
             }
             #restart-screen {
                 top: 20px;
-                right: 20px; /* Chhoti screen me corner thoda paas rahega */
+                right: 20px; 
             }
             button {
                 padding: 12px 30px;
-                font-size: 18px; /* Button phone me thoda chhota dikhega */
+                font-size: 18px; 
             }
         }
     </style>
 </head>
 <body>
 
-    <audio id="bg-music">
+    <!-- Preload auto lagaya taaki pehli baar me atke nahi -->
+    <audio id="bg-music" preload="auto">
         <source src="jana jaha.mp3" type="audio/mpeg">
     </audio>
 
     <div id="start-screen">
-        <button onclick="startProject()">❤️ FEEL THIS EMOTION 🥹🎶</button>
+        <!-- isRestart ko false bheja taaki pehli baar load na ho -->
+        <button onclick="startProject(false)">feel this emotion 🥺</button>
     </div>
 
-    <!-- Play Again Screen (Top Right) -->
     <div id="restart-screen">
-        <button onclick="startProject()">Play Again 🔄</button>
-    </div>🥹
+        <!-- isRestart ko true bheja taaki repeat par glitch na aaye -->
+        <button onclick="startProject(true)">Play Again 🔄</button>
+    </div>
 
     <div class="scene">
         <img id="moon" src="Crisp Detailed Full Moon (2).png" alt="Moon">
-        <video id="hands" src="romantic_hands_no_timer.mp4" muted playsinline></video>
+        <!-- webkit-playsinline aur preload="auto" add kiya mobile ke liye -->
+        <video id="hands" src="romantic_hands_no_timer.mp4" muted playsinline webkit-playsinline preload="auto"></video>
         <img id="heart" src="Glossy Red Heart on Black (1).png" alt="Heart">
     </div>
 
@@ -169,8 +172,8 @@
 
         let magicalTimer; 
 
-        function startProject() {
-            // Dono button screens ko hatao
+        // isRestart variable check karega ki button pehli baar daba hai ya Play Again wala
+        function startProject(isRestart) {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('restart-screen').style.display = 'none';
             
@@ -179,24 +182,25 @@
             let moon = document.getElementById('moon');
             let heart = document.getElementById('heart');
 
-            // Play Again dabane par sab kuch reset karo
             moon.style.opacity = '1';
             video.style.opacity = '0.95';
             heart.style.opacity = '0';
             heart.style.transform = 'scale(0.2)';
             
-            // Audio ko force reload aur reset karo taaki loop perfectly chale
-            audio.load(); 
+            // Sirf Play Again dabane par hi gaane ko force load karega
+            if(isRestart) {
+                audio.load(); 
+            }
+            
+            audio.currentTime = 0; 
             video.currentTime = 0; 
             
-            // Play karo
-            audio.play();
-            video.play();
+            // Promises add kiye taaki agar gadbad ho toh browser crash/freeze na ho
+            audio.play().catch(e => console.log("Audio Play Error:", e));
+            video.play().catch(e => console.log("Video Play Error:", e));
 
-            // Pehle ka timer chal raha ho to usko hata do
             clearTimeout(magicalTimer);
 
-            // 8 seconds ka magical timer
             magicalTimer = setTimeout(() => {
                 moon.style.opacity = '0'; 
                 video.style.opacity = '0'; 
@@ -206,7 +210,6 @@
             }, 8000); 
         }
 
-        // Jaise hi gaana khatam hoga, Play Again button top right me aa jayega
         document.getElementById('bg-music').onended = function() {
             document.getElementById('restart-screen').style.display = 'block';
         };

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEART_BREAK Project</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: sans-serif;
+        }
+
+        /* Realistic Stars Animation */
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.1; }
+            100% { opacity: 1; }
+        }
+
+        /* Scene Container */
+        .scene {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Bada Moon Setup */
+        #moon {
+            position: absolute;
+            width: 550px; 
+            z-index: 1;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        /* Hands VIDEO Setup */
+        #hands {
+            position: absolute;
+            width: 480px; 
+            height: 480px; 
+            object-fit: cover; 
+            object-position: center 75%; 
+            z-index: 2; 
+            opacity: 0.95; 
+            -webkit-mask-image: radial-gradient(closest-side, black 25%, transparent 85%);
+            mask-image: radial-gradient(closest-side, black 25%, transparent 85%);
+            transition: opacity 1.5s ease-in-out; 
+        }
+
+        /* Heart Setup */
+        #heart {
+            position: absolute;
+            width: 550px; 
+            z-index: 3; 
+            opacity: 0; 
+            transform: scale(0.2); 
+            transition: opacity 1.5s ease-in-out, transform 2.5s ease-out; 
+        }
+
+        /* Start Screen */
+        #start-screen {
+            position: absolute;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.9);
+        }
+
+        /* Restart Screen - Top Right Corner Fix */
+        #restart-screen {
+            display: none; 
+            position: absolute;
+            z-index: 10;
+            top: 30px; 
+            right: 40px; 
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 22px;
+            cursor: pointer;
+            background-color: #e60000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(230,0,0,0.5);
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+
+        /* ========================================= */
+        /* MOBILE RESPONSIVE FIX (For Phone Screens) */
+        /* ========================================= */
+        @media (max-width: 600px) {
+            #moon, #heart {
+                width: 90vw; 
+            }
+            #hands {
+                width: 80vw; 
+                height: 80vw; 
+            }
+            #restart-screen {
+                top: 20px;
+                right: 20px; 
+            }
+            button {
+                padding: 12px 30px;
+                font-size: 18px; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preload auto lagaya taaki pehli baar me atke nahi -->
+    <audio id="bg-music" preload="auto">
+        <source src="jana jaha.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="start-screen">
+        <!-- isRestart ko false bheja taaki pehli baar load na ho -->
+        <button onclick="startProject(false)">feel this emotion 🥺</button>
+    </div>
+
+    <div id="restart-screen">
+        <!-- isRestart ko true bheja taaki repeat par glitch na aaye -->
+        <button onclick="startProject(true)">Play Again 🔄</button>
+    </div>
+
+    <div class="scene">
+        <img id="moon" src="Crisp Detailed Full Moon (2).png" alt="Moon">
+        <!-- webkit-playsinline aur preload="auto" add kiya mobile ke liye -->
+        <video id="hands" src="romantic_hands_no_timer.mp4" muted playsinline webkit-playsinline preload="auto"></video>
+        <img id="heart" src="Glossy Red Heart on Black (1).png" alt="Heart">
+    </div>
+
+    <script>
+        // Generate random realistic stars
+        const numStars = 200; 
+        for (let i = 0; i < numStars; i++) {
+            let star = document.createElement("div");
+            star.className = "star";
+            
+            let size = Math.random() * 2.5 + "px";
+            star.style.width = size;
+            star.style.height = size;
+            star.style.left = Math.random() * 100 + "vw";
+            star.style.top = Math.random() * 100 + "vh";
+            
+            star.style.animationDuration = (Math.random() * 3 + 1) + "s";
+            document.body.appendChild(star);
+        }
+
+        let magicalTimer; 
+
+        // isRestart variable check karega ki button pehli baar daba hai ya Play Again wala
+        function startProject(isRestart) {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('restart-screen').style.display = 'none';
+            
+            let audio = document.getElementById('bg-music');
+            let video = document.getElementById('hands');
+            let moon = document.getElementById('moon');
+            let heart = document.getElementById('heart');
+
+            moon.style.opacity = '1';
+            video.style.opacity = '0.95';
+            heart.style.opacity = '0';
+            heart.style.transform = 'scale(0.2)';
+            
+            // Sirf Play Again dabane par hi gaane ko force load karega
+            if(isRestart) {
+                audio.load(); 
+            }
+            
+            audio.currentTime = 0; 
+            video.currentTime = 0; 
+            
+            // Promises add kiye taaki agar gadbad ho toh browser crash/freeze na ho
+            audio.play().catch(e => console.log("Audio Play Error:", e));
+            video.play().catch(e => console.log("Video Play Error:", e));
+
+            clearTimeout(magicalTimer);
+
+            magicalTimer = setTimeout(() => {
+                moon.style.opacity = '0'; 
+                video.style.opacity = '0'; 
+                
+                heart.style.opacity = '1'; 
+                heart.style.transform = 'scale(1)'; 
+            }, 8000); 
+        }
+
+        document.getElementById('bg-music').onended = function() {
+            document.getElementById('restart-screen').style.display = 'block';
+        };
+    </script>
+</body>
+</html>
