@@ -17,7 +17,7 @@
             font-family: sans-serif;
         }
 
-        /* Realistic Stars Animation */
+        /* Realistic Stars */
         .star {
             position: absolute;
             background-color: white;
@@ -29,7 +29,6 @@
             100% { opacity: 1; }
         }
 
-        /* Scene Container */
         .scene {
             position: relative;
             width: 100%;
@@ -39,7 +38,6 @@
             align-items: center;
         }
 
-        /* Bada Moon Setup */
         #moon {
             position: absolute;
             width: 550px; 
@@ -47,13 +45,13 @@
             transition: opacity 1.5s ease-in-out;
         }
 
-        /* Hands VIDEO Setup */
-        #hands {
+        /* ==================================================== */
+        /* NAYA TRICK: Dabba (Container) banaya jisme mask lagega */
+        /* ==================================================== */
+        #hands-container {
             position: absolute;
             width: 480px; 
             height: 480px; 
-            object-fit: cover; 
-            object-position: center 75%; 
             z-index: 2; 
             opacity: 0.95; 
             -webkit-mask-image: radial-gradient(closest-side, black 25%, transparent 85%);
@@ -61,7 +59,14 @@
             transition: opacity 1.5s ease-in-out; 
         }
 
-        /* Heart Setup */
+        /* Video ab safely dabbe ke andar rahega */
+        #hands {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 75%;
+        }
+
         #heart {
             position: absolute;
             width: 550px; 
@@ -71,7 +76,6 @@
             transition: opacity 1.5s ease-in-out, transform 2.5s ease-out; 
         }
 
-        /* Start Screen */
         #start-screen {
             position: absolute;
             z-index: 10;
@@ -83,7 +87,6 @@
             background: rgba(0,0,0,0.9);
         }
 
-        /* Restart Screen - Top Right Corner Fix */
         #restart-screen {
             display: none; 
             position: absolute;
@@ -107,103 +110,90 @@
             background-color: #ff3333;
         }
 
-        /* ========================================= */
-        /* MOBILE RESPONSIVE FIX (For Phone Screens) */
-        /* ========================================= */
+        /* MOBILE RESPONSIVE FIX */
         @media (max-width: 600px) {
-            #moon, #heart {
-                width: 90vw; 
-            }
-            #hands {
-                width: 80vw; 
-                height: 80vw; 
-            }
-            #restart-screen {
-                top: 20px;
-                right: 20px; 
-            }
-            button {
-                padding: 12px 30px;
-                font-size: 18px; 
-            }
+            #moon, #heart { width: 90vw; }
+            #hands-container { width: 80vw; height: 80vw; }
+            #restart-screen { top: 20px; right: 20px; }
+            button { padding: 12px 30px; font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Preload auto lagaya taaki pehli baar me atke nahi -->
     <audio id="bg-music" preload="auto">
         <source src="jana jaha.mp3" type="audio/mpeg">
     </audio>
 
     <div id="start-screen">
-        <!-- isRestart ko false bheja taaki pehli baar load na ho -->
         <button onclick="startProject(false)">feel this emotion 🥺</button>
     </div>
 
     <div id="restart-screen">
-        <!-- isRestart ko true bheja taaki repeat par glitch na aaye -->
         <button onclick="startProject(true)">Play Again 🔄</button>
     </div>
 
     <div class="scene">
         <img id="moon" src="Crisp Detailed Full Moon (2).png" alt="Moon">
-        <!-- webkit-playsinline aur preload="auto" add kiya mobile ke liye -->
-        <video id="hands" src="romantic_hands_no_timer.mp4" muted playsinline webkit-playsinline preload="auto"></video>
+        
+        <!-- Yahan par structure change kiya hai Mobile ke liye -->
+        <div id="hands-container">
+            <video id="hands" muted playsinline webkit-playsinline preload="auto">
+                <source src="romantic_hands_no_timer.mp4" type="video/mp4">
+            </video>
+        </div>
+
         <img id="heart" src="Glossy Red Heart on Black (1).png" alt="Heart">
     </div>
 
     <script>
-        // Generate random realistic stars
         const numStars = 200; 
         for (let i = 0; i < numStars; i++) {
             let star = document.createElement("div");
             star.className = "star";
-            
             let size = Math.random() * 2.5 + "px";
             star.style.width = size;
             star.style.height = size;
             star.style.left = Math.random() * 100 + "vw";
             star.style.top = Math.random() * 100 + "vh";
-            
             star.style.animationDuration = (Math.random() * 3 + 1) + "s";
             document.body.appendChild(star);
         }
 
         let magicalTimer; 
 
-        // isRestart variable check karega ki button pehli baar daba hai ya Play Again wala
         function startProject(isRestart) {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('restart-screen').style.display = 'none';
             
             let audio = document.getElementById('bg-music');
             let video = document.getElementById('hands');
+            let videoContainer = document.getElementById('hands-container');
             let moon = document.getElementById('moon');
             let heart = document.getElementById('heart');
 
+            // Ab container ki opacity control hogi
             moon.style.opacity = '1';
-            video.style.opacity = '0.95';
+            videoContainer.style.opacity = '0.95';
             heart.style.opacity = '0';
             heart.style.transform = 'scale(0.2)';
             
-            // Sirf Play Again dabane par hi gaane ko force load karega
             if(isRestart) {
-                audio.load(); 
+                audio.load();
+                video.load(); 
             }
             
             audio.currentTime = 0; 
             video.currentTime = 0; 
             
-            // Promises add kiye taaki agar gadbad ho toh browser crash/freeze na ho
-            audio.play().catch(e => console.log("Audio Play Error:", e));
-            video.play().catch(e => console.log("Video Play Error:", e));
+            audio.play().catch(e => console.log("Audio Error:", e));
+            video.play().catch(e => console.log("Video Error:", e));
 
             clearTimeout(magicalTimer);
 
             magicalTimer = setTimeout(() => {
                 moon.style.opacity = '0'; 
-                video.style.opacity = '0'; 
+                videoContainer.style.opacity = '0'; 
                 
                 heart.style.opacity = '1'; 
                 heart.style.transform = 'scale(1)'; 
