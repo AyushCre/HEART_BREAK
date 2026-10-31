@@ -84,26 +84,24 @@
             transition: opacity 1.5s ease-in-out, transform 2.5s ease-out; 
         }
 
-        /* NAYA: 3D Boundary-less Photo */
+        /* NAYA: Halka sa Reddish Romantic Tint */
         #final-couple {
             position: absolute;
-            width: 500px; /* Thoda bada kiya taaki center poora cover kare */
+            width: 500px; 
             height: 500px;
             z-index: 4; 
             opacity: 0; 
             object-fit: cover;
             object-position: center;
-            /* Hard circle hata diya gaya hai */
             transform: scale(0.2); 
             transition: opacity 1.5s ease-in-out, transform 2.5s ease-out;
             
-            /* SUPER SOFT MASK: Boundary dikhne ka chance hi nahi */
-            -webkit-mask-image: radial-gradient(circle, black 25%, transparent 70%);
-            mask-image: radial-gradient(circle, black 25%, transparent 70%);
+            /* SUPER SOFT MASK */
+            -webkit-mask-image: radial-gradient(circle, black 35%, transparent 65%);
+            mask-image: radial-gradient(circle, black 35%, transparent 65%);
             
-            /* 3D BLEND: Multiply aur brightness se photo heart ke andar ghul jayegi */
-            mix-blend-mode: multiply; 
-            filter: brightness(1.3);
+            /* MAGIC TRICK: Halka sa reddish glow bina photo ko dark kiye */
+            filter: brightness(1.1) contrast(1.1) sepia(25%) hue-rotate(-30deg) saturate(130%);
         }
 
         #start-screen {
@@ -247,7 +245,7 @@
                 heart.style.opacity = '1'; 
                 heart.style.transform = 'scale(1)'; 
                 
-                finalCouple.style.opacity = '0.85'; 
+                finalCouple.style.opacity = '0.95'; 
                 finalCouple.style.transform = 'scale(1)'; 
             }, 10000); 
         }
