@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEART_BREAK Project</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: sans-serif;
+        }
+
+        /* Realistic Stars Animation */
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.1; }
+            100% { opacity: 1; }
+        }
+
+        .scene {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Moon Setup */
+        #moon {
+            position: absolute;
+            width: 650px; 
+            z-index: 1;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        /* Photo Container */
+        #photo-container {
+            position: absolute;
+            width: 580px; 
+            height: 580px; 
+            z-index: 2; 
+            opacity: 0.95; 
+            mix-blend-mode: multiply; 
+            background: linear-gradient(to bottom, #ff7e5f 0%, #feb47b 100%); 
+            filter: brightness(1.2) contrast(1.1); 
+            border-radius: 50%; 
+            overflow: hidden;
+            transition: opacity 1.5s ease-in-out; 
+            -webkit-mask-image: radial-gradient(circle, black 70%, transparent 100%);
+            mask-image: radial-gradient(circle, black 70%, transparent 100%);
+        }
+
+        .slideshow-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0; 
+            mix-blend-mode: multiply; 
+            transition: opacity 0.8s ease-in-out; 
+        }
+
+        /* Heart Setup */
+        #heart {
+            position: absolute;
+            width: 650px; 
+            z-index: 3; 
+            opacity: 0; 
+            transform: scale(0.2); 
+            transition: opacity 1.5s ease-in-out, transform 2.5s ease-out; 
+        }
+
+        /* Final Photo - Size kam kiya taaki heart ke bahar na nikle */
+        #final-couple {
+            position: absolute;
+            width: 380px; /* 500px se 380px kar diya taaki perfectly fit ho */
+            height: 380px;
+            z-index: 4; 
+            opacity: 0; 
+            object-fit: cover;
+            object-position: center;
+            transform: scale(0.2); 
+            transition: opacity 1.5s ease-in-out, transform 2.5s ease-out;
+            
+            /* Tight mask lagaya taaki edges ekdum control me rahein */
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            
+            filter: brightness(1.1) contrast(1.1) sepia(25%) hue-rotate(-30deg) saturate(130%);
+        }
+
+        #start-screen {
+            position: absolute;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.9);
+        }
+
+        /* Invisible full-screen button for tap anywhere */
+        #restart-screen {
+            display: none; 
+            position: absolute;
+            z-index: 50; 
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            cursor: pointer;
+            background: transparent; 
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 22px;
+            cursor: pointer;
+            background-color: #e60000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(230,0,0,0.5);
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 600px) {
+            #moon, #heart { width: 95vw; }
+            #photo-container { width: 85vw; height: 85vw; }
+            /* Mobile me bhi size kam karke fit kiya */
+            #final-couple { width: 55vw; height: 55vw; } 
+            button { padding: 12px 30px; font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" preload="auto">
+        <source src="jana jaha.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="start-screen">
+        <button onclick="startProject(false)">❤️ FEEL THIS EMOTION 🥹 🎶</button>
+    </div>
+
+    <!-- Poori screen ek invisible clickable area hai -->
+    <div id="restart-screen" onclick="startProject(true)"></div>
+
+    <div class="scene">
+        <img id="moon" src="Crisp Detailed Full Moon (2).png" alt="Moon">
+        
+        <div id="photo-container">
+            <img class="slideshow-img" id="img1" src="images (10).jpeg" alt="Photo 1">
+            <img class="slideshow-img" id="img2" src="images (11).jpeg" alt="Photo 2">
+            <img class="slideshow-img" id="img3" src="images (12).jpeg" alt="Photo 3">
+            <img class="slideshow-img" id="img4" src="photo.png" alt="Photo 4">
+        </div>
+
+        <img id="heart" src="Glossy Red Heart on Black (1).png" alt="Heart">
+        <img id="final-couple" src="images (10) (1).jpeg" alt="Final Couple">
+    </div>
+
+    <script>
+        const numStars = 200; 
+        for (let i = 0; i < numStars; i++) {
+            let star = document.createElement("div");
+            star.className = "star";
+            let size = Math.random() * 2.5 + "px";
+            star.style.width = size;
+            star.style.height = size;
+            star.style.left = Math.random() * 100 + "vw";
+            star.style.top = Math.random() * 100 + "vh";
+            star.style.animationDuration = (Math.random() * 3 + 1) + "s";
+            document.body.appendChild(star);
+        }
+
+        let mainTimer; 
+        let slideTimers = [];
+
+        function startProject(isRestart) {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('restart-screen').style.display = 'none';
+            
+            let audio = document.getElementById('bg-music');
+            let moon = document.getElementById('moon');
+            let photoContainer = document.getElementById('photo-container');
+            let heart = document.getElementById('heart');
+            let finalCouple = document.getElementById('final-couple');
+            let imgs = document.querySelectorAll('.slideshow-img');
+
+            moon.style.opacity = '1';
+            photoContainer.style.opacity = '0.95'; 
+            heart.style.opacity = '0';
+            heart.style.transform = 'scale(0.2)';
+            
+            finalCouple.style.opacity = '0';
+            finalCouple.style.transform = 'scale(0.2)';
+            
+            imgs.forEach(img => img.style.opacity = '0'); 
+
+            clearTimeout(mainTimer);
+            slideTimers.forEach(timer => clearTimeout(timer));
+            slideTimers = [];
+            
+            audio.load();
+            audio.currentTime = 0; 
+            
+            let playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Browser blocked audio:", error);
+                });
+            }
+
+            imgs[0].style.opacity = '1'; 
+
+            slideTimers.push(setTimeout(() => { imgs[0].style.opacity = '0'; imgs[1].style.opacity = '1'; }, 2500)); 
+            slideTimers.push(setTimeout(() => { imgs[1].style.opacity = '0'; imgs[2].style.opacity = '1'; }, 5000)); 
+            slideTimers.push(setTimeout(() => { imgs[2].style.opacity = '0'; imgs[3].style.opacity = '1'; }, 7500)); 
+
+            mainTimer = setTimeout(() => {
+                moon.style.opacity = '0'; 
+                photoContainer.style.opacity = '0'; 
+                
+                heart.style.opacity = '1'; 
+                heart.style.transform = 'scale(1)'; 
+                
+                finalCouple.style.opacity = '0.95'; 
+                finalCouple.style.transform = 'scale(1)'; 
+            }, 10000); 
+        }
+
+        document.getElementById('bg-music').onended = function() {
+            document.getElementById('restart-screen').style.display = 'block';
+        };
+    </script>
+</body>
+</html>

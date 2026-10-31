@@ -84,11 +84,11 @@
             transition: opacity 1.5s ease-in-out, transform 2.5s ease-out; 
         }
 
-        /* NAYA: Halka sa Reddish Romantic Tint */
+        /* Final Photo - Size kam kiya taaki heart ke bahar na nikle */
         #final-couple {
             position: absolute;
-            width: 500px; 
-            height: 500px;
+            width: 380px; /* 500px se 380px kar diya taaki perfectly fit ho */
+            height: 380px;
             z-index: 4; 
             opacity: 0; 
             object-fit: cover;
@@ -96,11 +96,10 @@
             transform: scale(0.2); 
             transition: opacity 1.5s ease-in-out, transform 2.5s ease-out;
             
-            /* SUPER SOFT MASK */
-            -webkit-mask-image: radial-gradient(circle, black 35%, transparent 65%);
-            mask-image: radial-gradient(circle, black 35%, transparent 65%);
+            /* Tight mask lagaya taaki edges ekdum control me rahein */
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            mask-image: radial-gradient(circle, black 40%, transparent 70%);
             
-            /* MAGIC TRICK: Halka sa reddish glow bina photo ko dark kiye */
             filter: brightness(1.1) contrast(1.1) sepia(25%) hue-rotate(-30deg) saturate(130%);
         }
 
@@ -115,12 +114,17 @@
             background: rgba(0,0,0,0.9);
         }
 
+        /* Invisible full-screen button for tap anywhere */
         #restart-screen {
             display: none; 
             position: absolute;
-            z-index: 10;
-            top: 30px; 
-            right: 40px; 
+            z-index: 50; 
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            cursor: pointer;
+            background: transparent; 
         }
 
         button {
@@ -141,11 +145,9 @@
         /* MOBILE RESPONSIVE */
         @media (max-width: 600px) {
             #moon, #heart { width: 95vw; }
-            #photo-container { 
-                width: 85vw; height: 85vw; 
-            }
-            #final-couple { width: 70vw; height: 70vw; } 
-            #restart-screen { top: 20px; right: 20px; }
+            #photo-container { width: 85vw; height: 85vw; }
+            /* Mobile me bhi size kam karke fit kiya */
+            #final-couple { width: 55vw; height: 55vw; } 
             button { padding: 12px 30px; font-size: 18px; }
         }
     </style>
@@ -157,12 +159,11 @@
     </audio>
 
     <div id="start-screen">
-        <button onclick="startProject(false)">❤️ FEEL THIS EMOTION 🥺 🎶</button>
+        <button onclick="startProject(false)">❤️ FEEL THIS EMOTION 🥹 🎶</button>
     </div>
 
-    <div id="restart-screen">
-        <button onclick="startProject(true)">Play Again 🔄</button>
-    </div>
+    <!-- Poori screen ek invisible clickable area hai -->
+    <div id="restart-screen" onclick="startProject(true)"></div>
 
     <div class="scene">
         <img id="moon" src="Crisp Detailed Full Moon (2).png" alt="Moon">
@@ -175,7 +176,6 @@
         </div>
 
         <img id="heart" src="Glossy Red Heart on Black (1).png" alt="Heart">
-        
         <img id="final-couple" src="images (10) (1).jpeg" alt="Final Couple">
     </div>
 
@@ -237,7 +237,6 @@
             slideTimers.push(setTimeout(() => { imgs[1].style.opacity = '0'; imgs[2].style.opacity = '1'; }, 5000)); 
             slideTimers.push(setTimeout(() => { imgs[2].style.opacity = '0'; imgs[3].style.opacity = '1'; }, 7500)); 
 
-            // Exact 10 seconds baad moon gayab aur heart couple photo ke sath enter hoga
             mainTimer = setTimeout(() => {
                 moon.style.opacity = '0'; 
                 photoContainer.style.opacity = '0'; 
