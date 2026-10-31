@@ -46,15 +46,17 @@
             transition: opacity 1.5s ease-in-out;
         }
 
-        /* Photo Container - Brightness aur Contrast badhaya taaki photo clear dikhe */
+        /* Photo Container - Yahan humne ek Fake Romantic Sunset Background daala hai */
         #photo-container {
             position: absolute;
             width: 580px; 
             height: 580px; 
             z-index: 2; 
-            opacity: 0.95; /* Opacity badha di */
+            opacity: 0.95; 
             mix-blend-mode: multiply; 
-            filter: brightness(1.25) contrast(1.2); /* MAGIC TRICK: Isse photo dark nahi hogi aur moon bhi dikhega */
+            /* MAGIC TRICK: Ye ek warm orange-pink sunset color dega sabhi empty photos ko */
+            background: linear-gradient(to bottom, #ff7e5f 0%, #feb47b 100%); 
+            filter: brightness(1.2) contrast(1.1); 
             border-radius: 50%; 
             overflow: hidden;
             transition: opacity 1.5s ease-in-out; 
@@ -70,6 +72,8 @@
             object-fit: cover;
             object-position: center;
             opacity: 0; 
+            /* MAGIC TRICK 2: Ye safed background ko hatakar piche ka CSS sunset dikhayega */
+            mix-blend-mode: multiply; 
             transition: opacity 0.8s ease-in-out; 
         }
 
@@ -124,7 +128,8 @@
                 width: 85vw; 
                 height: 85vw; 
                 mix-blend-mode: multiply;
-                filter: brightness(1.25) contrast(1.2); 
+                background: linear-gradient(to bottom, #ff7e5f 0%, #feb47b 100%);
+                filter: brightness(1.2) contrast(1.1); 
             }
             #restart-screen { top: 20px; right: 20px; }
             button { padding: 12px 30px; font-size: 18px; }
@@ -186,7 +191,7 @@
             let imgs = document.querySelectorAll('.slideshow-img');
 
             moon.style.opacity = '1';
-            photoContainer.style.opacity = '0.95'; // Opacity reset match kiya
+            photoContainer.style.opacity = '0.95'; 
             heart.style.opacity = '0';
             heart.style.transform = 'scale(0.2)';
             
@@ -196,10 +201,15 @@
             slideTimers.forEach(timer => clearTimeout(timer));
             slideTimers = [];
             
-            if(isRestart) { audio.load(); }
-            
+            audio.load();
             audio.currentTime = 0; 
-            audio.play().catch(e => console.log("Audio Error:", e));
+            
+            let playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Browser blocked audio:", error);
+                });
+            }
 
             // 4 Photos Animation Logic (Har 2.5 seconds me change)
             imgs[0].style.opacity = '1'; 
