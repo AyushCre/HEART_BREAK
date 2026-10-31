@@ -46,7 +46,7 @@
             transition: opacity 1.5s ease-in-out;
         }
 
-        /* Photo Container - Yahan humne ek Fake Romantic Sunset Background daala hai */
+        /* Photo Container */
         #photo-container {
             position: absolute;
             width: 580px; 
@@ -54,7 +54,6 @@
             z-index: 2; 
             opacity: 0.95; 
             mix-blend-mode: multiply; 
-            /* MAGIC TRICK: Ye ek warm orange-pink sunset color dega sabhi empty photos ko */
             background: linear-gradient(to bottom, #ff7e5f 0%, #feb47b 100%); 
             filter: brightness(1.2) contrast(1.1); 
             border-radius: 50%; 
@@ -64,7 +63,6 @@
             mask-image: radial-gradient(circle, black 70%, transparent 100%);
         }
 
-        /* 4 Photos ke liye smooth transition */
         .slideshow-img {
             position: absolute;
             width: 100%;
@@ -72,7 +70,6 @@
             object-fit: cover;
             object-position: center;
             opacity: 0; 
-            /* MAGIC TRICK 2: Ye safed background ko hatakar piche ka CSS sunset dikhayega */
             mix-blend-mode: multiply; 
             transition: opacity 0.8s ease-in-out; 
         }
@@ -85,6 +82,28 @@
             opacity: 0; 
             transform: scale(0.2); 
             transition: opacity 1.5s ease-in-out, transform 2.5s ease-out; 
+        }
+
+        /* NAYA: 3D Boundary-less Photo */
+        #final-couple {
+            position: absolute;
+            width: 500px; /* Thoda bada kiya taaki center poora cover kare */
+            height: 500px;
+            z-index: 4; 
+            opacity: 0; 
+            object-fit: cover;
+            object-position: center;
+            /* Hard circle hata diya gaya hai */
+            transform: scale(0.2); 
+            transition: opacity 1.5s ease-in-out, transform 2.5s ease-out;
+            
+            /* SUPER SOFT MASK: Boundary dikhne ka chance hi nahi */
+            -webkit-mask-image: radial-gradient(circle, black 25%, transparent 70%);
+            mask-image: radial-gradient(circle, black 25%, transparent 70%);
+            
+            /* 3D BLEND: Multiply aur brightness se photo heart ke andar ghul jayegi */
+            mix-blend-mode: multiply; 
+            filter: brightness(1.3);
         }
 
         #start-screen {
@@ -125,12 +144,9 @@
         @media (max-width: 600px) {
             #moon, #heart { width: 95vw; }
             #photo-container { 
-                width: 85vw; 
-                height: 85vw; 
-                mix-blend-mode: multiply;
-                background: linear-gradient(to bottom, #ff7e5f 0%, #feb47b 100%);
-                filter: brightness(1.2) contrast(1.1); 
+                width: 85vw; height: 85vw; 
             }
+            #final-couple { width: 70vw; height: 70vw; } 
             #restart-screen { top: 20px; right: 20px; }
             button { padding: 12px 30px; font-size: 18px; }
         }
@@ -161,6 +177,8 @@
         </div>
 
         <img id="heart" src="Glossy Red Heart on Black (1).png" alt="Heart">
+        
+        <img id="final-couple" src="images (10) (1).jpeg" alt="Final Couple">
     </div>
 
     <script>
@@ -188,12 +206,16 @@
             let moon = document.getElementById('moon');
             let photoContainer = document.getElementById('photo-container');
             let heart = document.getElementById('heart');
+            let finalCouple = document.getElementById('final-couple');
             let imgs = document.querySelectorAll('.slideshow-img');
 
             moon.style.opacity = '1';
             photoContainer.style.opacity = '0.95'; 
             heart.style.opacity = '0';
             heart.style.transform = 'scale(0.2)';
+            
+            finalCouple.style.opacity = '0';
+            finalCouple.style.transform = 'scale(0.2)';
             
             imgs.forEach(img => img.style.opacity = '0'); 
 
@@ -211,20 +233,22 @@
                 });
             }
 
-            // 4 Photos Animation Logic (Har 2.5 seconds me change)
             imgs[0].style.opacity = '1'; 
 
             slideTimers.push(setTimeout(() => { imgs[0].style.opacity = '0'; imgs[1].style.opacity = '1'; }, 2500)); 
             slideTimers.push(setTimeout(() => { imgs[1].style.opacity = '0'; imgs[2].style.opacity = '1'; }, 5000)); 
             slideTimers.push(setTimeout(() => { imgs[2].style.opacity = '0'; imgs[3].style.opacity = '1'; }, 7500)); 
 
-            // Exact 10 seconds baad moon aur photos gayab, heart ayega
+            // Exact 10 seconds baad moon gayab aur heart couple photo ke sath enter hoga
             mainTimer = setTimeout(() => {
                 moon.style.opacity = '0'; 
                 photoContainer.style.opacity = '0'; 
                 
                 heart.style.opacity = '1'; 
                 heart.style.transform = 'scale(1)'; 
+                
+                finalCouple.style.opacity = '0.85'; 
+                finalCouple.style.transform = 'scale(1)'; 
             }, 10000); 
         }
 
