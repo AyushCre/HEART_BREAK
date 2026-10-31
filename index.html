@@ -29,7 +29,6 @@
             100% { opacity: 1; }
         }
 
-        /* Scene Container */
         .scene {
             position: relative;
             width: 100%;
@@ -39,39 +38,51 @@
             align-items: center;
         }
 
-        /* Bada Moon Setup */
+        /* Moon Setup */
         #moon {
             position: absolute;
-            width: 550px; 
+            width: 650px; 
             z-index: 1;
             transition: opacity 1.5s ease-in-out;
         }
 
-        /* Hands VIDEO Setup - Desktop par Cinematic Blur */
-        #hands {
+        /* Photo Container - Brightness aur Contrast badhaya taaki photo clear dikhe */
+        #photo-container {
             position: absolute;
-            width: 480px; 
-            height: 480px; 
-            object-fit: cover; 
-            object-position: center 75%; 
+            width: 580px; 
+            height: 580px; 
             z-index: 2; 
-            opacity: 0.95; 
-            -webkit-mask-image: radial-gradient(closest-side, black 25%, transparent 85%);
-            mask-image: radial-gradient(closest-side, black 25%, transparent 85%);
+            opacity: 0.95; /* Opacity badha di */
+            mix-blend-mode: multiply; 
+            filter: brightness(1.25) contrast(1.2); /* MAGIC TRICK: Isse photo dark nahi hogi aur moon bhi dikhega */
+            border-radius: 50%; 
+            overflow: hidden;
             transition: opacity 1.5s ease-in-out; 
+            -webkit-mask-image: radial-gradient(circle, black 70%, transparent 100%);
+            mask-image: radial-gradient(circle, black 70%, transparent 100%);
+        }
+
+        /* 4 Photos ke liye smooth transition */
+        .slideshow-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0; 
+            transition: opacity 0.8s ease-in-out; 
         }
 
         /* Heart Setup */
         #heart {
             position: absolute;
-            width: 550px; 
+            width: 650px; 
             z-index: 3; 
             opacity: 0; 
             transform: scale(0.2); 
             transition: opacity 1.5s ease-in-out, transform 2.5s ease-out; 
         }
 
-        /* Start Screen */
         #start-screen {
             position: absolute;
             z-index: 10;
@@ -83,7 +94,6 @@
             background: rgba(0,0,0,0.9);
         }
 
-        /* Restart Screen - Top Right Corner */
         #restart-screen {
             display: none; 
             position: absolute;
@@ -107,29 +117,17 @@
             background-color: #ff3333;
         }
 
-        /* ========================================= */
-        /* MOBILE RESPONSIVE FIX (For Phone Screens) */
-        /* ========================================= */
+        /* MOBILE RESPONSIVE */
         @media (max-width: 600px) {
-            #moon, #heart {
-                width: 90vw; 
+            #moon, #heart { width: 95vw; }
+            #photo-container { 
+                width: 85vw; 
+                height: 85vw; 
+                mix-blend-mode: multiply;
+                filter: brightness(1.25) contrast(1.2); 
             }
-            #hands {
-                width: 80vw; 
-                height: 80vw; 
-                /* Mobile fix: Mask hataya aur video ko direct gol (circle) kar diya taaki gayab na ho */
-                -webkit-mask-image: none !important;
-                mask-image: none !important;
-                border-radius: 50%; 
-            }
-            #restart-screen {
-                top: 20px;
-                right: 20px; 
-            }
-            button {
-                padding: 12px 30px;
-                font-size: 18px; 
-            }
+            #restart-screen { top: 20px; right: 20px; }
+            button { padding: 12px 30px; font-size: 18px; }
         }
     </style>
 </head>
@@ -140,7 +138,7 @@
     </audio>
 
     <div id="start-screen">
-        <button onclick="startProject(false)">feel this emotion 🥺</button>
+        <button onclick="startProject(false)">❤️ FEEL THIS EMOTION 🥺 🎶</button>
     </div>
 
     <div id="restart-screen">
@@ -149,63 +147,75 @@
 
     <div class="scene">
         <img id="moon" src="Crisp Detailed Full Moon (2).png" alt="Moon">
-        <video id="hands" src="romantic_hands_no_timer.mp4" muted playsinline webkit-playsinline disablePictureInPicture preload="auto"></video>
+        
+        <div id="photo-container">
+            <img class="slideshow-img" id="img1" src="images (10).jpeg" alt="Photo 1">
+            <img class="slideshow-img" id="img2" src="images (11).jpeg" alt="Photo 2">
+            <img class="slideshow-img" id="img3" src="images (12).jpeg" alt="Photo 3">
+            <img class="slideshow-img" id="img4" src="photo.png" alt="Photo 4">
+        </div>
+
         <img id="heart" src="Glossy Red Heart on Black (1).png" alt="Heart">
     </div>
 
     <script>
-        // Generate random realistic stars
         const numStars = 200; 
         for (let i = 0; i < numStars; i++) {
             let star = document.createElement("div");
             star.className = "star";
-            
             let size = Math.random() * 2.5 + "px";
             star.style.width = size;
             star.style.height = size;
             star.style.left = Math.random() * 100 + "vw";
             star.style.top = Math.random() * 100 + "vh";
-            
             star.style.animationDuration = (Math.random() * 3 + 1) + "s";
             document.body.appendChild(star);
         }
 
-        let magicalTimer; 
+        let mainTimer; 
+        let slideTimers = [];
 
         function startProject(isRestart) {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('restart-screen').style.display = 'none';
             
             let audio = document.getElementById('bg-music');
-            let video = document.getElementById('hands');
             let moon = document.getElementById('moon');
+            let photoContainer = document.getElementById('photo-container');
             let heart = document.getElementById('heart');
+            let imgs = document.querySelectorAll('.slideshow-img');
 
             moon.style.opacity = '1';
-            video.style.opacity = '0.95';
+            photoContainer.style.opacity = '0.95'; // Opacity reset match kiya
             heart.style.opacity = '0';
             heart.style.transform = 'scale(0.2)';
             
-            if(isRestart) {
-                audio.load(); 
-                video.load();
-            }
+            imgs.forEach(img => img.style.opacity = '0'); 
+
+            clearTimeout(mainTimer);
+            slideTimers.forEach(timer => clearTimeout(timer));
+            slideTimers = [];
+            
+            if(isRestart) { audio.load(); }
             
             audio.currentTime = 0; 
-            video.currentTime = 0; 
-            
             audio.play().catch(e => console.log("Audio Error:", e));
-            video.play().catch(e => console.log("Video Error:", e));
 
-            clearTimeout(magicalTimer);
+            // 4 Photos Animation Logic (Har 2.5 seconds me change)
+            imgs[0].style.opacity = '1'; 
 
-            magicalTimer = setTimeout(() => {
+            slideTimers.push(setTimeout(() => { imgs[0].style.opacity = '0'; imgs[1].style.opacity = '1'; }, 2500)); 
+            slideTimers.push(setTimeout(() => { imgs[1].style.opacity = '0'; imgs[2].style.opacity = '1'; }, 5000)); 
+            slideTimers.push(setTimeout(() => { imgs[2].style.opacity = '0'; imgs[3].style.opacity = '1'; }, 7500)); 
+
+            // Exact 10 seconds baad moon aur photos gayab, heart ayega
+            mainTimer = setTimeout(() => {
                 moon.style.opacity = '0'; 
-                video.style.opacity = '0'; 
+                photoContainer.style.opacity = '0'; 
                 
                 heart.style.opacity = '1'; 
                 heart.style.transform = 'scale(1)'; 
-            }, 8000); 
+            }, 10000); 
         }
 
         document.getElementById('bg-music').onended = function() {
