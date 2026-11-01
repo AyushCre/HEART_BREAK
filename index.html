@@ -46,7 +46,7 @@
             transition: opacity 1.5s ease-in-out;
         }
 
-        /* Photo Container */
+        /* Photo Container - Sunset background hatakar original clear visibility wapas laayi */
         #photo-container {
             position: absolute;
             width: 580px; 
@@ -54,8 +54,7 @@
             z-index: 2; 
             opacity: 0.95; 
             mix-blend-mode: multiply; 
-            background: linear-gradient(to bottom, #ff7e5f 0%, #feb47b 100%); 
-            filter: brightness(1.2) contrast(1.1); 
+            filter: brightness(1.25) contrast(1.2); 
             border-radius: 50%; 
             overflow: hidden;
             transition: opacity 1.5s ease-in-out; 
@@ -70,7 +69,7 @@
             object-fit: cover;
             object-position: center;
             opacity: 0; 
-            mix-blend-mode: multiply; 
+            /* Yahan se multiply hata diya taaki image original form me saaf dikhe */
             transition: opacity 0.8s ease-in-out; 
         }
 
@@ -87,7 +86,7 @@
         /* Final Photo - Size kam kiya taaki heart ke bahar na nikle */
         #final-couple {
             position: absolute;
-            width: 380px; /* 500px se 380px kar diya taaki perfectly fit ho */
+            width: 380px; 
             height: 380px;
             z-index: 4; 
             opacity: 0; 
@@ -145,8 +144,10 @@
         /* MOBILE RESPONSIVE */
         @media (max-width: 600px) {
             #moon, #heart { width: 95vw; }
-            #photo-container { width: 85vw; height: 85vw; }
-            /* Mobile me bhi size kam karke fit kiya */
+            #photo-container { 
+                width: 85vw; height: 85vw; 
+                filter: brightness(1.25) contrast(1.2); 
+            }
             #final-couple { width: 55vw; height: 55vw; } 
             button { padding: 12px 30px; font-size: 18px; }
         }
